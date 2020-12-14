@@ -4,7 +4,6 @@ class Api::V1::UsersController < ApplicationController
   # GET api/vi/tasks/
   def index
     @users = User.all
-    session[:user_id] = user.id
     render json: { status: 'success', data: @users }
   end
 
@@ -15,11 +14,19 @@ class Api::V1::UsersController < ApplicationController
 
   # Post api/vi/tasks
   def create
-    @user = User.new(user_params)
-    if @user.save
-      render json: { status: 'success', data: @user }
+    user = User.find_by(user_params)
+    p "&&&&&&&&&&&&&&&&&&&"
+    p user_params
+    if user.nil?
+      @user = User.new({user_id: User.count + 1})
+      if @user.save
+        render json: { status: 'success new', data: @user }
+      else
+        render json: { status: 'error', data: @user.errors }
+      end
     else
-      render json: { status: 'error', data: @user.errors }
+
+      render json: { status: 'success', data: user }
     end
   end
 
@@ -40,7 +47,7 @@ class Api::V1::UsersController < ApplicationController
 
   private
   def user_params
-    params.require(:user).permit(:user_id)
+    params.permit(:user_id)
   end
 
   def set_user

@@ -14,6 +14,8 @@ class Api::V1::LogsController < ApplicationController
 
   # Post api/vi/tasks
   def create
+    p "########################"
+    p log_params
     @log = Log.new(log_params)
     if @log.save
       render json: { status: 'success', data: @log }
@@ -39,7 +41,7 @@ class Api::V1::LogsController < ApplicationController
 
   private
   def log_params
-    params.require(:log).permit(:uri)
+    params.permit(:uri)
   end
 
   def set_log
